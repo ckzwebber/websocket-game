@@ -20,6 +20,7 @@ import {
 } from './game.types';
 
 @Injectable()
+/** Core game logic service managing players, bullets and physics */
 export class GameService {
   private readonly logger = new Logger('GameService');
   private players = new Map<string, Player>();

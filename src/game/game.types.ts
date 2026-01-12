@@ -1,7 +1,7 @@
 // Arena world boundaries
 export const WORLD_WIDTH = 2000;
 export const WORLD_HEIGHT = 2000;
-export const PLAYER_SIZE = 28;
+export const PLAYER_SIZE = 28; // pixels
 export const PLAYER_SPEED = 5;
 export const PLAYER_MAX_HP = 100;
 export const BULLET_SPEED = 14;

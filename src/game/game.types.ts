@@ -9,7 +9,7 @@ export const BULLET_RADIUS = 4;
 export const BULLET_DAMAGE = 18; // HP per hit
 export const BULLET_LIFETIME = 1500;
 export const SHOOT_COOLDOWN = 180; // milliseconds
-export const RESPAWN_DELAY = 2000;
+export const RESPAWN_DELAY = 2000; // milliseconds
 
 export interface Player {
   id: string;

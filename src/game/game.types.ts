@@ -7,7 +7,7 @@ export const PLAYER_MAX_HP = 100;
 export const BULLET_SPEED = 14; // pixels per tick
 export const BULLET_RADIUS = 4;
 export const BULLET_DAMAGE = 18; // HP per hit
-export const BULLET_LIFETIME = 1500;
+export const BULLET_LIFETIME = 1500; // milliseconds
 export const SHOOT_COOLDOWN = 180; // milliseconds
 export const RESPAWN_DELAY = 2000; // milliseconds
 

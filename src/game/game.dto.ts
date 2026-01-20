@@ -6,6 +6,7 @@ import {
   Matches,
 } from 'class-validator';
 
+/** DTO for player join event */
 export class JoinGameDto {
   @IsString()
   @Length(2, 16)

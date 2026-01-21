@@ -17,6 +17,7 @@ export class JoinGameDto {
   nickname: string;
 }
 
+/** DTO for player movement event */
 export class MovePayloadDto {
   @IsIn(['up', 'down', 'left', 'right'])
   direction: 'up' | 'down' | 'left' | 'right';

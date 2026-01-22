@@ -23,6 +23,7 @@ export class MovePayloadDto {
   direction: 'up' | 'down' | 'left' | 'right';
 }
 
+/** DTO for player shoot event */
 export class ShootPayloadDto {
   @IsNumber()
   angle: number;

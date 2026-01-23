@@ -29,6 +29,7 @@ export class ShootPayloadDto {
   angle: number;
 }
 
+/** DTO for player aim event */
 export class AimPayloadDto {
   @IsNumber()
   angle: number;

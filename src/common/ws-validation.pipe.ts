@@ -7,6 +7,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
 @Injectable()
+/** WebSocket payload validation pipe */
 export class WsValidationPipe implements PipeTransform {
   async transform(value: any) {
     // The pipe is applied per-handler via decorator metadata;

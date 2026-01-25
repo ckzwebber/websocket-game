@@ -3,6 +3,7 @@ import { AppService } from './app.service';
 import { GameService } from './game/game.service';
 
 @Controller()
+/** Root API controller */
 export class AppController {
   constructor(
     private readonly appService: AppService,

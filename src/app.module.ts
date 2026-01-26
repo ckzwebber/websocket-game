@@ -14,4 +14,5 @@ import { GameService } from './game/game.service';
   controllers: [AppController],
   providers: [AppService, GameGateway, GameService],
 })
+/** Root application module */
 export class AppModule {}

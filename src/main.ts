@@ -25,12 +25,12 @@ async function bootstrap() {
   await app.listen(port);
 
   const logger = new Logger('Bootstrap');
-  logger.log('══════════════════════════════════════════');
+  logger.log('═══════════════════════════════════════');
   logger.log('  Arena — Multiplayer Shooter Server');
   logger.log(`  Port: ${port}`);
   logger.log(`  CORS: ${corsOrigin}`);
   logger.log(`  Env: ${config.get<string>('NODE_ENV', 'development')}`);
   logger.log('  Status: Ready for connections');
-  logger.log('══════════════════════════════════════════');
+  logger.log('═══════════════════════════════════════');
 }
 bootstrap();

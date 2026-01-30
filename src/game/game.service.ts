@@ -27,7 +27,7 @@ export class GameService {
   private bullets = new Map<string, Bullet>();
   private pendingKills: KillEvent[] = [];
   private pendingHits: HitEvent[] = [];
-  private bulletCounter: number = 0;
+  private readonly bulletCounter: number = 0;
 
   addPlayer(socketId: string, nickname: string) {
     const player: Player = {

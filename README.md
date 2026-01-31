@@ -72,7 +72,7 @@ The server runs a **60 FPS** authoritative game loop:
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - pnpm
 
 ### Install & Run

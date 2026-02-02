@@ -2,7 +2,7 @@
   "name": "websocket-game",
   "version": "0.0.1",
   "description": "Arena multiplayer shooter game server",
-  "author": "",
+  "author": "Arena Team",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

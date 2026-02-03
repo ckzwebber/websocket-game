@@ -26,7 +26,7 @@ async function bootstrap() {
 
   const logger = new Logger('Bootstrap');
   logger.log('═══════════════════════════════════════');
-  logger.log('  Arena — Multiplayer Shooter Server');
+  logger.log('  Arena — Real-time Multiplayer Shooter');
   logger.log(`  Port: ${port}`);
   logger.log(`  CORS: ${corsOrigin}`);
   logger.log(`  Env: ${config.get<string>('NODE_ENV', 'development')}`);

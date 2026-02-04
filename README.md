@@ -1,5 +1,6 @@
 # Arena — Multiplayer Shooter Server
 
+
 Real-time multiplayer top-down shooter backend built with NestJS and Socket.IO.
 
 ## Tech Stack

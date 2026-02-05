@@ -4,6 +4,6 @@ import { Injectable } from '@nestjs/common';
 /** Application root service */
 export class AppService {
   getHello(): string {
-    return 'Hello World!';
+    return 'Arena Game Server';
   }
 }

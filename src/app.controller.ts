@@ -28,7 +28,7 @@ export class AppController {
         totalKills: stats.totalKills,
       },
       memory: {
-        rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
+        rss_mb: Math.round(process.memoryUsage().rss / 1024 / 1024),
         heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
       },
     };

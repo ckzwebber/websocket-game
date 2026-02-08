@@ -120,7 +120,7 @@ export class GameGateway
           `[📊] Players: ${stats.playerCount} | Bullets: ${stats.bulletCount} | Total kills: ${stats.totalKills}`,
         );
       }
-    }, 30000);
+    }, 30000); // 30 seconds
 
     // Cleanup expired rate limit buckets every 10s
     this.cleanupInterval = setInterval(() => {

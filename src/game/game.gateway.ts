@@ -125,7 +125,7 @@ export class GameGateway
     // Cleanup expired rate limit buckets every 10s
     this.cleanupInterval = setInterval(() => {
       this.rateLimiter.cleanup();
-    }, 10000);
+    }, 10000); // 10 seconds
 
     this.logger.log('Game loop started (60 ticks/s)');
   }

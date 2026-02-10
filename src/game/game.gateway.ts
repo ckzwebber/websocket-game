@@ -111,7 +111,7 @@ export class GameGateway
       kills.forEach((kill) => {
         this.server.emit('kill', kill);
       });
-    }, 1000 / 60);
+    }, 1000 / 60); // 60 FPS
 
     this.statsInterval = setInterval(() => {
       const stats = this.gameService.getStats();

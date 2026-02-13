@@ -6,10 +6,7 @@ import {
   OnGatewayInit,
   WebSocketServer,
 } from '@nestjs/websockets';
-import {
-  Logger,
-  OnModuleDestroy,
-} from '@nestjs/common';
+import { Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GameService } from './game.service';
 import {
@@ -77,7 +74,11 @@ const RATE_LIMITS = {
   },
 })
 export class GameGateway
-  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, OnModuleDestroy
+  implements
+    OnGatewayConnection,
+    OnGatewayDisconnect,
+    OnGatewayInit,
+    OnModuleDestroy
 {
   private readonly logger = new Logger('GameGateway');
   private readonly rateLimiter = new ClientRateLimiter();
@@ -153,7 +154,9 @@ export class GameGateway
 
     const dto = await validatePayload(JoinGameDto, payload).catch(() => null);
     if (!dto) {
-      client.emit('error', { message: 'Nickname inválido (2-16 chars, sem caracteres especiais)' });
+      client.emit('error', {
+        message: 'Nickname inválido (2-16 chars, sem caracteres especiais)',
+      });
       return;
     }
 
@@ -172,7 +175,9 @@ export class GameGateway
   async handleMove(client: Socket, payload: unknown) {
     if (!this.rateLimiter.allow(client.id, 'move', RATE_LIMITS.move)) return;
 
-    const dto = await validatePayload(MovePayloadDto, payload).catch(() => null);
+    const dto = await validatePayload(MovePayloadDto, payload).catch(
+      () => null,
+    );
     if (!dto) return;
 
     this.gameService.setInput(client.id, dto.direction, true);
@@ -180,9 +185,14 @@ export class GameGateway
 
   @SubscribeMessage('move:stop')
   async handleMoveStop(client: Socket, payload: unknown) {
-    if (!this.rateLimiter.allow(client.id, 'move:stop', RATE_LIMITS['move:stop'])) return;
+    if (
+      !this.rateLimiter.allow(client.id, 'move:stop', RATE_LIMITS['move:stop'])
+    )
+      return;
 
-    const dto = await validatePayload(MovePayloadDto, payload).catch(() => null);
+    const dto = await validatePayload(MovePayloadDto, payload).catch(
+      () => null,
+    );
     if (!dto) return;
 
     this.gameService.setInput(client.id, dto.direction, false);
@@ -192,7 +202,9 @@ export class GameGateway
   async handleShoot(client: Socket, payload: unknown) {
     if (!this.rateLimiter.allow(client.id, 'shoot', RATE_LIMITS.shoot)) return;
 
-    const dto = await validatePayload(ShootPayloadDto, payload).catch(() => null);
+    const dto = await validatePayload(ShootPayloadDto, payload).catch(
+      () => null,
+    );
     if (!dto) return;
     if (!Number.isFinite(dto.angle)) return;
 

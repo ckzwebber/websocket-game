@@ -1,115 +1,104 @@
-# Arena — Multiplayer Shooter Server
+# Arena — Backend
 
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 
-Real-time multiplayer top-down shooter backend built with NestJS and Socket.IO.
+Servidor autoritativo de um jogo multiplayer top-down PvP em tempo real, comunicação via Socket.IO. Frontend em [ckzwebber/websocket-game-front](https://github.com/ckzwebber/websocket-game-front).
 
-## Tech Stack
+Demo: `https://<seu-servidor>/health`
 
-- **Framework**: NestJS
-- **WebSocket**: Socket.IO via `@nestjs/websockets`
-- **Language**: TypeScript
-- **Runtime**: Node.js
+## Visão geral
 
-## Architecture
+O servidor mantém autoridade total sobre o estado do jogo: posições, física de balas, detecção de colisão e sistema de kills. O cliente envia apenas inputs e recebe o estado atualizado a cada tick. O game loop roda a 60 FPS e emite um broadcast unificado com todos os jogadores e balas a cada frame.
+
+## Tecnologias
+
+- NestJS + TypeScript
+- Socket.IO via `@nestjs/websockets`
+- Node.js 20+
+
+## Arquitetura
 
 ```
-src/
-├── main.ts              # Bootstrap, CORS config
-├── app.module.ts        # Root module
-├── app.controller.ts    # Health check
-├── app.service.ts       # App service
-└── game/
-    ├── game.types.ts    # Shared types & constants
-    ├── game.service.ts  # Core game logic (physics, collision, shooting)
-    └── game.gateway.ts  # WebSocket gateway (events, game loop)
+┌──────────────┐    move, shoot, aim    ┌──────────────┐
+│   Cliente    │ ──────────────────────►│   Servidor   │
+│  Canvas 2D   │                        │   NestJS     │
+│              │                        │              │
+│  Prediction  │ ◄──────────────────────│ Autoridade   │
+│ Reconciliação│  state:update, kill,   │  do estado   │
+└──────────────┘       hit, joined      └──────────────┘
 ```
 
-## Game Loop
+## Game loop
 
-The server runs a **60 FPS** authoritative game loop:
+A cada tick (1000/60 ms):
 
-1. **Player Movement** — Server-side position updates with AABB collision between players
-2. **Bullet Physics** — Velocity-based bullet movement with lifetime and bounds checking
-3. **Hit Detection** — Circle-based bullet-player collision detection
-4. **Kill System** — HP tracking, death handling, auto-respawn after 2 seconds
-5. **State Broadcast** — Unified `state:update` event with all players and bullets every tick
+1. Movimenta jogadores com base nos inputs recebidos, aplicando AABB collision entre players e clamping nos limites do mundo.
+2. Avança posição de cada bala pela velocidade, remove as que saírem dos limites ou expirarem.
+3. Detecta colisão bala-jogador (círculo), aplica dano e registra hit.
+4. Se HP chegar a zero, registra kill, marca jogador como morto e agenda respawn em 2s.
+5. Emite `state:update` com todos os jogadores e balas, mais eventos `kill` e `hit` acumulados no tick.
 
-## WebSocket Events
+## Eventos WebSocket
 
 ### Client → Server
 
-| Event       | Payload         | Description                       |
+| Evento      | Payload         | Descrição                         |
 | ----------- | --------------- | --------------------------------- |
-| `join`      | `{ nickname }`  | Join the game                     |
-| `move`      | `{ direction }` | Start moving (up/down/left/right) |
-| `move:stop` | `{ direction }` | Stop moving                       |
-| `shoot`     | `{ angle }`     | Fire bullet at angle (radians)    |
-| `aim`       | `{ angle }`     | Update aim direction              |
+| `join`      | `{ nickname }`  | Entrar na partida                 |
+| `move`      | `{ direction }` | Iniciar movimento (up/down/left/right) |
+| `move:stop` | `{ direction }` | Parar movimento                   |
+| `shoot`     | `{ angle }`     | Atirar no ângulo dado (radianos)  |
+| `aim`       | `{ angle }`     | Atualizar direção de mira         |
 
 ### Server → Client
 
-| Event          | Payload                                          | Description                 |
-| -------------- | ------------------------------------------------ | --------------------------- |
-| `joined`       | `{ id }`                                         | Confirm join with socket ID |
-| `state:update` | `{ players[], bullets[] }`                       | Full game state (60fps)     |
-| `kill`         | `{ killerId, killerName, victimId, victimName }` | Kill notification           |
-| `hit`          | `{ targetId, shooterId, x, y }`                  | Hit notification            |
+| Evento         | Payload                                          | Descrição                    |
+| -------------- | ------------------------------------------------ | ---------------------------- |
+| `joined`       | `{ id }`                                         | Confirma entrada com socket ID |
+| `state:update` | `{ players[], bullets[] }`                       | Estado completo (60fps)      |
+| `kill`         | `{ killerId, killerName, victimId, victimName }` | Notificação de kill          |
+| `hit`          | `{ targetId, shooterId, x, y }`                  | Notificação de hit           |
 
-## Game Constants
+## Endpoint HTTP
 
-| Constant        | Value     | Description                 |
-| --------------- | --------- | --------------------------- |
-| World Size      | 2000×2000 | Play area dimensions        |
-| Player Size     | 28px      | Player hitbox               |
-| Player Speed    | 5         | Movement speed per tick     |
-| Max HP          | 100       | Starting health             |
-| Bullet Speed    | 14        | Bullet velocity per tick    |
-| Bullet Damage   | 18        | Damage per hit              |
-| Shoot Cooldown  | 180ms     | Minimum time between shots  |
-| Bullet Lifetime | 1500ms    | Maximum bullet age          |
-| Respawn Delay   | 2000ms    | Time to respawn after death |
+### `GET /health`
 
-## Getting Started
+Retorna o estado do servidor. Usado por cronjob externo para manter a instância ativa em free tier.
 
-### Prerequisites
+```json
+{
+  "status": "ok",
+  "uptime": 1234.56,
+  "timestamp": "2026-05-12T14:30:00.000Z",
+  "game": {
+    "players": 3,
+    "bullets": 7,
+    "totalKills": 42
+  },
+  "memory": {
+    "rss_mb": 64,
+    "heapUsed_mb": 38
+  }
+}
+```
 
-- Node.js 20+
-- pnpm
-
-### Install & Run
+## Rodando localmente
 
 ```bash
 pnpm install
 pnpm start:dev
 ```
 
-### Environment Variables
+## Variáveis de ambiente
 
-| Variable      | Default                 | Description         |
+| Variável      | Padrão                  | Descrição           |
 | ------------- | ----------------------- | ------------------- |
-| `PORT`        | `3000`                  | Server port         |
-| `CORS_ORIGIN` | `http://localhost:5173` | Allowed CORS origin |
+| `PORT`        | `3000`                  | Porta do servidor   |
+| `CORS_ORIGIN` | `http://localhost:5173` | Origem CORS permitida |
 
-### Build for Production
+## Licença
 
-```bash
-pnpm build
-pnpm start:prod
-```
-
-## Logging
-
-The server outputs structured, color-coded logs via NestJS Logger:
-
-| Symbol | Event               | Level |
-| ------ | ------------------- | ----- |
-| `[+]`  | Player joined       | log   |
-| `[-]`  | Player left         | log   |
-| `[★]`  | Player entered game | log   |
-| `[→]`  | Client connected    | log   |
-| `[←]`  | Client disconnected | log   |
-| `[☠]`  | Kill event          | warn  |
-| `[↻]`  | Player respawned    | debug |
-| `[📊]` | Periodic stats      | log   |
-
-Stats are logged every 30 seconds when players are online.
+MIT

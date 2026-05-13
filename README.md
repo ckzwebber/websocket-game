@@ -7,7 +7,7 @@
 
 Servidor autoritativo de um jogo multiplayer top-down PvP em tempo real, comunicação via Socket.IO. Frontend em [ckzwebber/websocket-game-front](https://github.com/ckzwebber/websocket-game-front).
 
-Demo: `https://<seu-servidor>/health`
+Demo: `https://websocket-game-wwfh.onrender.com/health`
 
 ## Visão geral
 
